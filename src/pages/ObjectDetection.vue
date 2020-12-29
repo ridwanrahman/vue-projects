@@ -89,14 +89,15 @@ export default {
         }
 
         async function openCamera() {
-            const devices = await navigator.mediaDevices.enumerateDevices();
-            const cams = devices.filter((device => device.kind == "videoinput"));
-            const camID = cams[0].deviceId;
-            if(navigator.mediaDevices.getUserMedia) {
-                navigator.mediaDevices.getUserMedia({video:{deviceId:{exact:camID}}}).then(stream => {
-                    this.isStreaming = true;
+            if (navigator.mediaDevices.getUserMedia) {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const cams = devices.filter((device) => device.kind === "videoinput");
+                const camId = cams[0].deviceId;
+                const video = cams.length === 1 ? true : { deviceId: { exact: camId } };
+                navigator.mediaDevices.getUserMedia({ video: video }).then((stream) => {
+                    isStreaming.value = true;
                     videoRef.value.srcObject = stream;
-                })
+                });
             }
         }
 
